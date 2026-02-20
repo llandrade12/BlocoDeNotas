@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const remaining = cleaned.substring(lastCurrencyIndex + currencies[currencies.length - 1].length).trim();
             
             if (remaining) {
-                const statusKeywords = ['Pago', 'Vencido', 'Cancelado', 'Ativo'];
+                const statusKeywords = ['Amarelado', 'Vermelho', 'Acordo', 'Ativo'];
                 const foundStatus = statusKeywords.find(s => remaining.includes(s));
                 if (foundStatus) {
                     status = foundStatus;
