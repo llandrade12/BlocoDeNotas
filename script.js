@@ -75,14 +75,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ) || 0;
     };
 
-    // Alterar Status diretamente
     window.changeStatus = (index, newStatus) => {
         billings[index].status = newStatus;
         localStorage.setItem('espartano_billings', JSON.stringify(billings));
-        renderBillings(); // Re-renderiza para atualizar cores se necessário
+        renderBillings(); 
     };
 
-    // Renderizar lista
     const renderBillings = () => {
         billingList.innerHTML = '';
         if (billings.length === 0) {
@@ -92,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
         billings.forEach((item, index) => {
             const devendo = (item.total || 0) - (item.paid || 0);
             
-            // Lógica de cores para o select de status
             let statusClass = '';
             if (item.status === 'Pago') statusClass = 'status-pago';
             else if (item.status === 'Vencido') statusClass = 'status-vencido';
@@ -196,7 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.display = 'block';
     };
 
-    // Adicionar cobrança (MANUAL)
     billingForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const newBilling = {
@@ -221,11 +217,9 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Cliente adicionado com sucesso!');
     });
 
-    // FUNÇÃO COLAR EM LOTE - Extrator Inteligente
     const parseExcelLine = (line) => {
         const cleaned = line.replace(/^\d+x:\s*/, '').trim(); // Remove "1x:", "2x:", etc
         
-        // Regex para identificar padrões
         const cpfRegex = /\d{3}\.\d{3}\.\d{3}-\d{2}/;
         const phoneRegex = /\d{2}\s\d{4,5}-\d{4}/g;
         const dateRegex = /\d{2}\/\d{2}\/\d{4}/g;
