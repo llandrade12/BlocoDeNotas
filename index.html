@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloco de Notas</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Bibliotecas para exportação -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.browser.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>BLOCO DE<span class="accent"> NOTAS</span></h1>
+            <p class="subtitle"></p>
+        </header>
+
+        <main>
+            <!-- SEÇÃO DE ABAS -->
+            <div class="tabs-container">
+                <button class="tab-btn active" data-tab="manual">Adicionar Manual</button>
+                <button class="tab-btn" data-tab="batch">Colar em Lote</button>
+            </div>
+
+            <!-- TAB 1: ADICIONAR MANUAL -->
+            <section id="manual-tab" class="form-section card tab-content active">
+                <h2>Adicionar Novo Cliente</h2>
+                <form id="billing-form">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="name">Nome do Cliente</label>
+                            <input type="text" id="name" placeholder="Ex: João Silva" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="cpf">CPF</label>
+                            <input type="text" id="cpf" placeholder="000.000.000-00">
+                        </div>
+                        <div class="input-group">
+                            <label for="phone">Telefone</label>
+                            <input type="text" id="phone" placeholder="27 99999-9999">
+                        </div>
+                        <div class="input-group">
+                            <label for="phone-ref">Telefone/Referência</label>
+                            <input type="text" id="phone-ref" placeholder="27 99999-9999 (Nome)">
+                        </div>
+                        <div class="input-group">
+                            <label for="start-date">Data Inicial</label>
+                            <input type="date" id="start-date" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="end-date">Data Final (Prazo)</label>
+                            <input type="date" id="end-date" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="loan">Empréstimo (R$)</label>
+                            <input type="number" id="loan" step="0.01" placeholder="0,00">
+                        </div>
+                        <div class="input-group">
+                            <label for="daily">Diária (R$)</label>
+                            <input type="number" id="daily" step="0.01" placeholder="0,00">
+                        </div>
+                        <div class="input-group">
+                            <label for="interest">Juros (R$)</label>
+                            <input type="number" id="interest" step="0.01" placeholder="0,00">
+                        </div>
+                        <div class="input-group">
+                            <label for="total">Total à Pagar (R$)</label>
+                            <input type="number" id="total" step="0.01" placeholder="0,00" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="paid">Valor Pago (R$)</label>
+                            <input type="number" id="paid" step="0.01" placeholder="0,00">
+                        </div>
+                        <div class="input-group">
+                            <label for="fines">Multas (R$)</label>
+                            <input type="number" id="fines" step="0.01" placeholder="0,00">
+                        </div>
+                        <div class="input-group full-width">
+                            <label for="observations">Observações</label>
+                            <textarea id="observations" rows="3" placeholder="Detalhes adicionais..."></textarea>
+                        </div>
+                        <div class="input-group">
+                            <label for="status">Status</label>
+                            <select id="status">
+                                <option value="Ativo">Ativo</option>
+                                <option value="Pago">Acordo</option>
+                                <option value="Vencido">Vermelho</option>
+                                <option value="Cancelado">Amarelado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Adicionar à Lista</button>
+                </form>
+            </section>
+
+            <section id="batch-tab" class="form-section card tab-content">
+                <h2>Colar em Lote</h2>
+                <p class="info-text">Cole os dados do Excel no formato abaixo. O sistema irá processar automaticamente.</p>
+                <div class="batch-info">
+                    <strong>Ordem esperada das colunas:</strong><br>
+                    Cliente | CPF | Telefone | Telefone/Ref | Data Inicial | Data Final | Empréstimo | Diária | Juros | Total à Pagar | Valor Pago | Multas | Observação | Status
+                </div>
+                <textarea id="batch-input" rows="10" placeholder="Cole aqui os dados do Excel (um cliente por linha)&#10;Ex:&#10;GABRIEL SOARES 113.228.837-18 27 99237-0937 27 99904-2252 03/06/2025 22/06/2025 R$ 1.500,00 R$ 105,00 R$ 600,00 R$ 2.100,00 R$ 1.550,00"></textarea>
+                <button id="batch-btn" class="btn btn-primary">Processar Lote</button>
+            </section>
+
+            <section class="list-section card">
+                <div class="list-header">
+                    <h2>Lista de Cobranças</h2>
+                    <div class="actions">
+                        <button id="copy-btn" class="btn btn-secondary">Copiar Texto</button>
+                        <button id="pdf-btn" class="btn btn-danger">Baixar PDF</button>
+                        <button id="word-btn" class="btn btn-info">Baixar Word</button>
+                        <button id="clear-btn" class="btn btn-outline">Limpar Tudo</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="billing-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Cliente</th>
+                                <th>CPF</th>
+                                <th>Telefone</th>
+                                <th>Empréstimo</th>
+                                <th>Total</th>
+                                <th>Pago</th>
+                                <th>Devendo</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="billing-list">
+                            <!-- Inserido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Sistema de Cobrança Espartano - Eficiência e Controle</p>
+        </footer>
+    </div>
+
+    <!-- MODAL DE DETALHES -->
+    <div id="detail-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-title">Detalhes do Cliente</h2>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
