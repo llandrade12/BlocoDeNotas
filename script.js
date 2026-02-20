@@ -111,9 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>
                     <select class="status-select ${statusClass}" onchange="changeStatus(${index}, this.value)">
                         <option value="Ativo" ${item.status === 'Ativo' ? 'selected' : ''}>Ativo</option>
-                        <option value="Pago" ${item.status === 'Pago' ? 'selected' : ''}>Pago</option>
-                        <option value="Vencido" ${item.status === 'Vencido' ? 'selected' : ''}>Vencido</option>
-                        <option value="Cancelado" ${item.status === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+                        <option value="Pago" ${item.status === 'Acordo' ? 'selected' : ''}>Acordo</option>
+                        <option value="Vencido" ${item.status === 'Vermelho' ? 'selected' : ''}>Vermelho</option>
+                        <option value="Cancelado" ${item.status === 'Amarelado' ? 'selected' : ''}>Amarelado</option>
                     </select>
                 </td>
                 <td>
@@ -472,7 +472,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Limpar tudo
     clearBtn.addEventListener('click', () => {
         if (confirm('Tem certeza que deseja apagar toda a lista?')) {
             billings = [];
